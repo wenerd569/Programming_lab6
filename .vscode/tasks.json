@@ -1,0 +1,65 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "Debugdsd",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "$build/f${fileBasenameNoExtension}",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ],
+    "tasks": [
+        {
+            "label": "Generate CMakePresets.json",
+            "type": "shell",
+            "command": "conan install . --output-folder=build --build=missing -s build_type=Debug",
+            "group": "build",
+            "problemMatcher": [],
+            "detail": "Runs Conan to generate CMakePresets.json for Debug mode."
+        },
+        {
+            "label": "AddLink (Debug)",
+            "type": "shell",
+            "command": "cp build/build/Debug/compile_commands.json .",
+            "group": "build",
+            "dependsOn": [
+                "Generate CMakePresets.json"
+            ],
+            "problemMatcher": []
+        },
+        {
+            "label": "Configure CMake (Debug)",
+            "type": "shell",
+            "command": "cmake --preset conan-debug",
+            "group": "build",
+            "dependsOn": [
+                "Configure CMake (Debug)"
+            ],
+            "problemMatcher": [],
+            "detail": "Configures CMake using the Conan-generated CMakePresets.json."
+        },
+        {
+            "label": "Build with CMake (Debug)",
+            "type": "shell",
+            "command": "cmake --build --preset conan-debug",
+            "group": "build",
+            "dependsOn": [
+                "Configure CMake (Debug)"
+            ],
+            "problemMatcher": []
+        }
+    ]
+}
